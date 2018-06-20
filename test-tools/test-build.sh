@@ -25,13 +25,10 @@ set -e
 : ${GO_VERSION="1.10"}
 
 REPO_URL=$1
+PROJECT_NAME=`echo $1 | rev | cut -d'/' -f1 | rev`
 
-mkdir -p tmp
-if [ $(uname -s) == "Darwin" ]; then
-  : ${T=`mktemp -d tmp/tmp.XXXXXXXXXX`}
-else
-  : ${T=`mkdir -p build`}
-fi
+mkdir -p ~/build
+: ${T=`mkdir -p ~/build/${PROJECT_NAME}`}
 
 DOCKER_GROUP_ID=2500
 sudo chown $DOCKER_GROUP_ID $PWD/$T
