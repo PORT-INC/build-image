@@ -27,14 +27,19 @@ set -e
 REPO_URL=$1
 PROJECT_NAME=`echo $1 | rev | cut -d'/' -f1 | rev`
 
-mkdir -p ~/build
-: ${T=`mkdir -p ~/build/${PROJECT_NAME}`}
+
+REPO_URL=$1
+PROJECT_NAME=`echo $1 | rev | cut -d'/' -f1 | rev`
+BUILD_DIR=~/build/${PROJECT_NAME}
+T=$BUILD_DIR
+
+mkdir -p $BUILD_DIR
 
 DOCKER_GROUP_ID=2500
-sudo chown $DOCKER_GROUP_ID $PWD/$T
-sudo chmod g+w $PWD/$T
-sudo setfacl -m default:group:$(id -g):rwx $PWD/$T
-sudo setfacl -m default:user:$DOCKER_GROUP_ID:rwx $PWD/$T
+sudo chown $DOCKER_GROUP_ID $BUILD_DIR
+sudo chmod g+w $BUILD_DIR
+sudo setfacl -m default:group:$(id -g):rwx $BUILD_DIR
+sudo setfacl -m default:user:$DOCKER_GROUP_ID:rwx $BUILD_DIR
 
 echo "Using temp dir: $T"
 chmod +w $T
@@ -51,18 +56,18 @@ git clone $REPO_URL $T/repo
 SCRIPT="/opt/buildhome/scripts/run-build.sh $2"
 
 docker run --rm \
-	-e "NODE_VERSION=$NODE_VERSION" \
-	-e "RUBY_VERSION=$RUBY_VERSION" \
-	-e "YARN_VERSION=$YARN_VERSION" \
-	-e "NPM_VERSION=$NPM_VERSION" \
-	-e "HUGO_VERSION=$HUGO_VERSION" \
-	-e "PHP_VERSION=$PHP_VERSION" \
-	-e "NETLIFY_VERBOSE=$NETLIFY_VERBOSE" \
-	-e "GO_VERSION=$GO_VERSION" \
-	-e "GO_IMPORT_PATH=$GO_IMPORT_PATH" \
-	-v $PWD/$T/scripts:/opt/buildhome/scripts \
-	-v $PWD/$T/repo:/opt/buildhome/repo \
-	-v $PWD/$T/cache:/opt/buildhome/cache \
-	-w /opt/build \
-	-it \
-	$NETLIFY_IMAGE $SCRIPT
+       -e "NODE_VERSION=$NODE_VERSION" \
+       -e "RUBY_VERSION=$RUBY_VERSION" \
+       -e "YARN_VERSION=$YARN_VERSION" \
+       -e "NPM_VERSION=$NPM_VERSION" \
+       -e "HUGO_VERSION=$HUGO_VERSION" \
+       -e "PHP_VERSION=$PHP_VERSION" \
+       -e "NETLIFY_VERBOSE=$NETLIFY_VERBOSE" \
+       -e "GO_VERSION=$GO_VERSION" \
+       -e "GO_IMPORT_PATH=$GO_IMPORT_PATH" \
+       -v $BUILD_DIR/scripts:/opt/buildhome/scripts \
+       -v $BUILD_DIR/repo:/opt/buildhome/repo \
+       -v $BUILD_DIR/cache:/opt/buildhome/cache \
+       -w /opt/build \
+       -it \
+       $NETLIFY_IMAGE $SCRIPT
