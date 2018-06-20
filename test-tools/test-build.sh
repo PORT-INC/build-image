@@ -50,8 +50,7 @@ chmod a+w $T/cache
 cp run-build* $T/scripts
 chmod +x $T/scripts/*
 
-rm -rf $T/repo
-git clone $REPO_URL $T/repo
+[[ ! -d $T/repo ]] && git clone $REPO_URL $T/repo
 
 SCRIPT="/opt/buildhome/scripts/run-build.sh $2"
 
