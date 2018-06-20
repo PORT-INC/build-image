@@ -30,14 +30,14 @@ mkdir -p tmp
 if [ $(uname -s) == "Darwin" ]; then
   : ${T=`mktemp -d tmp/tmp.XXXXXXXXXX`}
 else
-  : ${T=`mktemp -d -p tmp`}
+  : ${T=`mkdir -p build`}
 fi
 
 DOCKER_GROUP_ID=2500
-chown $DOCKER_GROUP_ID $PWD/$T
-chmod g+w $PWD/$T
-setfacl -m default:group:$(id -g):rwx $PWD/$T
-setfacl -m default:user:$DOCKER_GROUP_ID:rwx $PWD/$T
+sudo chown $DOCKER_GROUP_ID $PWD/$T
+sudo chmod g+w $PWD/$T
+sudo setfacl -m default:group:$(id -g):rwx $PWD/$T
+sudo setfacl -m default:user:$DOCKER_GROUP_ID:rwx $PWD/$T
 
 echo "Using temp dir: $T"
 chmod +w $T
