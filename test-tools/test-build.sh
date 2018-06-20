@@ -33,6 +33,12 @@ else
   : ${T=`mktemp -d -p tmp`}
 fi
 
+DOCKER_GROUP_ID=2500
+chown $DOCKER_GROUP_ID $PWD/$T
+chmod g+w $PWD/$T
+setfacl -m default:group:$(id -g):rwx $PWD/$T
+setfacl -m default:user:$DOCKER_GROUP_ID:rwx $PWD/$T
+
 echo "Using temp dir: $T"
 chmod +w $T
 mkdir -p $T/scripts
